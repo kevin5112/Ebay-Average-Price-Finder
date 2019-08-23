@@ -1,0 +1,17 @@
+<% include ./partials/header %>
+
+<div class="ui main text container">
+	<div class="ui huge header">Search for your item:</div>
+
+	
+	<form action="/results" method="GET">
+		<div class="ui action input">
+		  <input type="text" autocomplete="off" placeholder="ex: Playstation" name="search">
+		  <button class="ui icon button">
+		  	<i class="search icon"></i>	
+		  </button>
+		</div>
+	</form>
+	
+</div>
+<% include ./partials/footer %>

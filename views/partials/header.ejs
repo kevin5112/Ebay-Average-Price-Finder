@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Average Finder</title>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.4/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="/stylesheets/app.css">
+</head>
+<body>
+	<div class="ui fixed inverted menu">
+		<div class="ui container">
+			<a class="item" href="/">
+				<i class="inverted dollar sign icon"></i>APF
+			</a>
+			<a class="item" href="/search">
+				Search
+			</a>
+			<div class="right menu">
+				<form action="/results" method="GET">
+					<div class="item">
+						<div class="ui transparent inverted icon input">
+							<input type="text" name="search" placeholder="Search">
+							<button class="ui circular transparent inverted icon button"><i class="search icon"></i></button>
+						</div>
+					</div>
+				</form>	
+			</div>	
+		</div>
+	</div>

@@ -1,6 +1,7 @@
 // PACKAGES
 var express = require("express");
-var eBay = require('ebay-node-api');
+var eBay = require("ebay-node-api");
+var stats = require("stats-analysis");
 
 // DECLARATIONS
 var app = express();
@@ -49,21 +50,51 @@ function findEbayItem(req, res, next) {
 	totalPrice = 0.00;
 	itemAmount = 0;
 	var query = req.query.search;
+	var listOfPrices = [];
 
 	// makes the api call to search for item
 	ebay.findItemsByKeywords(query).then((data) => {
+		// if item does not exist, return 0
+		if( data[0].searchResult[0]['@count'] <= 0) {
+			avgPrice = 0;
+			return next();
+		}
 		var getObject = data[0].searchResult[0].item[0]; // item[#] <= the # is what number item to pick from ebay
 		console.log(data[0].searchResult[0].item[0].sellingStatus);
 
 		data[0].searchResult[0].item.forEach(function(item) {
 			var getPrice = item.sellingStatus[0].currentPrice[0].__value__;
-			
+			listOfPrices.push(getPrice);
+
+		});		
+
+		// print out prices before filtering out outliers
+		for(var i = 0; i < listOfPrices.length; ++i)
+		{
+			console.log(i + " " + listOfPrices[i]);
+		}
+
+		// get the array of index of outliers
+		var outliersIndexArr = stats.indexOfOutliers(listOfPrices, stats.outlierMethod.MAD);
+
+		// print out index of outliers
+		console.log("outliers at index: " + outliersIndexArr);	
+		console.log("removing " + outliersIndexArr.length + " outliers");
+		listOfPrices = stats.filterOutliers(listOfPrices, stats.outlierMethod.MAD)
+
+		// print after filtering out outliers
+		for(var i = 0; i < listOfPrices.length; ++i)
+		{
+			console.log(i + " " + listOfPrices[i]);
+		}
+
+		totalPrice = 0.00;
+		// finds average price
+		listOfPrices.forEach(function(price) {
 			// adds every item being added to the total price before dividing to find average
-			totalPrice += Number(getPrice);
+			totalPrice += parseFloat(price);
 			itemAmount += 1;
 		});
-
-		// finds average price
 		avgPrice = totalPrice/itemAmount;
 
 		console.log("searching for: " + query);		
@@ -77,10 +108,10 @@ function findEbayItem(req, res, next) {
 
 }
 
+var port = 3000;
 
-
-app.listen(3000, function() {
-	console.log("Server is running...");
+app.listen(port, function() {
+	console.log("Server is running on port " + port + "...");
 });
 
 
